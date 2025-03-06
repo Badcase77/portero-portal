@@ -1,148 +1,45 @@
 
 import { useState, useEffect } from "react";
-import { Calendar, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MatchCard from "@/components/MatchCard";
+import { fetchMatches, TeamMatch } from "@/services/iSquadService";
 import { cn } from "@/lib/utils";
-
-// Sample past matches data
-const pastMatches = [
-  {
-    id: "1",
-    homeTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    awayTeam: {
-      name: "Real Madrid",
-      logo: "https://logodownload.org/wp-content/uploads/2018/07/real-madrid-logo.png",
-    },
-    date: "2023-11-01",
-    time: "20:00",
-    venue: "Camp Nou, Barcelona",
-    competition: "LaLiga",
-    isPast: true,
-    result: {
-      homeScore: 2,
-      awayScore: 1,
-    },
-  },
-  {
-    id: "2",
-    homeTeam: {
-      name: "Atlético Madrid",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/atletico-madrid-logo.png",
-    },
-    awayTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    date: "2023-10-15",
-    time: "18:30",
-    venue: "Wanda Metropolitano, Madrid",
-    competition: "LaLiga",
-    isPast: true,
-    result: {
-      homeScore: 0,
-      awayScore: 0,
-    },
-  },
-  {
-    id: "3",
-    homeTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    awayTeam: {
-      name: "AC Milan",
-      logo: "https://logodownload.org/wp-content/uploads/2016/10/ac-milan-logo-0.png",
-    },
-    date: "2023-10-03",
-    time: "21:00",
-    venue: "Camp Nou, Barcelona",
-    competition: "Champions League",
-    isPast: true,
-    result: {
-      homeScore: 3,
-      awayScore: 1,
-    },
-  },
-  {
-    id: "4",
-    homeTeam: {
-      name: "Girona FC",
-      logo: "https://logodownload.org/wp-content/uploads/2022/07/girona-fc-logo.png",
-    },
-    awayTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    date: "2023-09-23",
-    time: "16:15",
-    venue: "Montilivi, Girona",
-    competition: "LaLiga",
-    isPast: true,
-    result: {
-      homeScore: 0,
-      awayScore: 2,
-    },
-  },
-  {
-    id: "5",
-    homeTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    awayTeam: {
-      name: "Real Betis",
-      logo: "https://logodownload.org/wp-content/uploads/2019/05/real-betis-logo-0.png",
-    },
-    date: "2023-09-16",
-    time: "20:00",
-    venue: "Camp Nou, Barcelona",
-    competition: "LaLiga",
-    isPast: true,
-    result: {
-      homeScore: 5,
-      awayScore: 0,
-    },
-  },
-  {
-    id: "6",
-    homeTeam: {
-      name: "Borussia Dortmund",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/bvb-borussia-dortmund-logo.png",
-    },
-    awayTeam: {
-      name: "FC Barcelona",
-      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
-    },
-    date: "2023-09-05",
-    time: "21:00",
-    venue: "Signal Iduna Park, Dortmund",
-    competition: "Champions League",
-    isPast: true,
-    result: {
-      homeScore: 2,
-      awayScore: 2,
-    },
-  }
-];
+import { toast } from "sonner";
 
 const PartidosAnteriores = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [filteredMatches, setFilteredMatches] = useState(pastMatches);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pastMatches, setPastMatches] = useState<TeamMatch[]>([]);
+  const [filteredMatches, setFilteredMatches] = useState<TeamMatch[]>([]);
   const [competitionFilter, setCompetitionFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
 
+  // Fetch matches from iSquad
   useEffect(() => {
-    setIsLoaded(true);
+    const getMatches = async () => {
+      setIsLoading(true);
+      try {
+        const { past } = await fetchMatches();
+        setPastMatches(past);
+      } catch (error) {
+        console.error("Error loading matches:", error);
+        toast.error("Error al cargar los partidos");
+      } finally {
+        setIsLoading(false);
+        setIsLoaded(true);
+      }
+    };
+
+    getMatches();
   }, []);
 
   useEffect(() => {
+    if (!pastMatches.length) return;
+    
     let filtered = [...pastMatches];
     
     // Apply competition filter
@@ -158,7 +55,7 @@ const PartidosAnteriores = () => {
     }
     
     setFilteredMatches(filtered);
-  }, [competitionFilter, sortOrder]);
+  }, [competitionFilter, sortOrder, pastMatches]);
 
   // Get unique competitions for filter
   const competitions = ["all", ...Array.from(new Set(pastMatches.map(match => match.competition)))];
@@ -175,43 +72,49 @@ const PartidosAnteriores = () => {
             Revisa los resultados de los partidos disputados por Fran Pérez y su equipo en las distintas competiciones.
           </p>
           
-          {/* Filters */}
-          <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              <Filter size={18} className="text-gray-500" />
-              <span className="text-sm font-medium">Filtrar por:</span>
+          {!isLoading && pastMatches.length > 0 && (
+            /* Filters */
+            <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <Filter size={18} className="text-gray-500" />
+                <span className="text-sm font-medium">Filtrar por:</span>
+              </div>
+              
+              <Select value={competitionFilter} onValueChange={setCompetitionFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Competición" />
+                </SelectTrigger>
+                <SelectContent>
+                  {competitions.map(comp => (
+                    <SelectItem key={comp} value={comp}>
+                      {comp === "all" ? "Todas las competiciones" : comp}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={sortOrder} onValueChange={setSortOrder}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Ordenar por" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Más recientes primero</SelectItem>
+                  <SelectItem value="oldest">Más antiguos primero</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            
-            <Select value={competitionFilter} onValueChange={setCompetitionFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Competición" />
-              </SelectTrigger>
-              <SelectContent>
-                {competitions.map(comp => (
-                  <SelectItem key={comp} value={comp}>
-                    {comp === "all" ? "Todas las competiciones" : comp}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Ordenar por" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Más recientes primero</SelectItem>
-                <SelectItem value="oldest">Más antiguos primero</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          )}
         </div>
       </section>
       
       {/* Matches Grid */}
       <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto">
-          {filteredMatches.length > 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : filteredMatches.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMatches.map((match, index) => (
                 <div 
