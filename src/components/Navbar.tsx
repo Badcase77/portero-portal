@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
@@ -56,13 +55,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2 z-10">
           <div className="font-bold text-xl md:text-2xl tracking-tight relative">
-            <span className="text-primary">Portero</span>
-            <span className="text-gray-800 dark:text-gray-200">Pro</span>
+            <span className="text-primary">Fran</span>
+            <span className="text-gray-800 dark:text-gray-200">Pérez</span>
             <div className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></div>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1">
           {navLinks.map((link) => (
             <Link
@@ -84,7 +82,6 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Mobile Menu Button */}
         <Button
           variant="ghost"
           size="icon"
@@ -96,7 +93,6 @@ const Navbar = () => {
         </Button>
       </div>
 
-      {/* Mobile Navigation */}
       <div
         className={cn(
           "fixed inset-0 z-40 bg-white dark:bg-gray-900 transform transition-transform duration-300 ease-in-out md:hidden",

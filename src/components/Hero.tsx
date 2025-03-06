@@ -49,7 +49,7 @@ const Hero = () => {
         )}
           style={{ animationDelay: "200ms" }}
         >
-          Protegiendo la portería con excelencia y pasión
+          Fran Pérez
         </h1>
 
         <p className={cn(
@@ -58,7 +58,7 @@ const Hero = () => {
         )}
           style={{ animationDelay: "400ms" }}
         >
-          Descubre el mundo de un guardameta de élite, sus entrenamientos, partidos y momentos destacados a lo largo de su carrera profesional.
+          Descubre el mundo de Fran Pérez, guardameta de élite, sus entrenamientos, partidos y momentos destacados a lo largo de su carrera profesional.
         </p>
 
         <div className={cn(
