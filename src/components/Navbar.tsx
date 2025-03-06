@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
@@ -34,7 +35,7 @@ const Navbar = () => {
     { name: 'Inicio', path: '/' },
     { name: 'Noticias', path: '/noticias' },
     { name: 'Partidos', path: '/partidos' },
-    { name: 'Torneos', path: '/torneos' },
+    { name: 'Partidos Anteriores', path: '/partidos/anteriores' },
     { name: 'Entrenamientos', path: '/entrenamientos' },
     { name: 'Destacados', path: '/destacados' },
   ];
