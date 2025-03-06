@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,12 +85,42 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-8px)' }
+				},
+				'pulse-subtle': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' }
+				},
+				'blur-in': {
+					'0%': { filter: 'blur(5px)', opacity: '0' },
+					'100%': { filter: 'blur(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 4s ease-in-out infinite',
+				'pulse-subtle': 'pulse-subtle 3s infinite',
+				'blur-in': 'blur-in 0.6s ease-out'
+			},
+			backdropBlur: {
+				xs: '2px',
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'hero-pattern': 'linear-gradient(to right bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4))',
+			},
+			boxShadow: {
+				'glass': '0 4px 20px rgba(0, 0, 0, 0.08)',
+				'glass-hover': '0 10px 30px rgba(0, 0, 0, 0.12)',
+				'glass-strong': '0 10px 25px rgba(0, 0, 0, 0.2)',
+			},
+			transitionDuration: {
+				'2000': '2000ms',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
