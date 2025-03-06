@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Search, Filter, Clock, Calendar, Tag } from "lucide-react";
+import { Search, Filter, Clock, Calendar, Tag, Video, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -33,7 +32,7 @@ const trainings: TrainingItem[] = [
     duration: "60 min",
     category: "Técnica",
     intensity: "high",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/training-reflexes",
     thumbnailUrl: "https://images.unsplash.com/photo-1644157463080-19ef59870914?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Carlos Rodríguez"
   },
@@ -45,7 +44,7 @@ const trainings: TrainingItem[] = [
     duration: "45 min",
     category: "Táctica",
     intensity: "medium",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/positioning",
     thumbnailUrl: "https://images.unsplash.com/photo-1547347298-4074fc3086f0?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Miguel Torres"
   },
@@ -57,7 +56,7 @@ const trainings: TrainingItem[] = [
     duration: "75 min",
     category: "Técnica",
     intensity: "medium",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/goal-kicks",
     thumbnailUrl: "https://images.unsplash.com/photo-1577223625816-5d0bee8bff07?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Carlos Rodríguez"
   },
@@ -69,7 +68,7 @@ const trainings: TrainingItem[] = [
     duration: "90 min",
     category: "Físico",
     intensity: "high",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/physical-training",
     thumbnailUrl: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Laura Sánchez"
   },
@@ -81,7 +80,7 @@ const trainings: TrainingItem[] = [
     duration: "60 min",
     category: "Técnica",
     intensity: "high",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/aerial-control",
     thumbnailUrl: "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Miguel Torres"
   },
@@ -93,7 +92,7 @@ const trainings: TrainingItem[] = [
     duration: "45 min",
     category: "Táctica",
     intensity: "low",
-    videoUrl: "#",
+    videoUrl: "https://example.com/videos/video-analysis",
     thumbnailUrl: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?q=80&w=2369&auto=format&fit=crop&ixlib=rb-4.0.3",
     coach: "Carlos Rodríguez"
   }
@@ -171,7 +170,7 @@ const Entrenamientos = () => {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">Entrenamientos</h1>
           <p className="text-lg max-w-2xl mb-8 text-gray-600 dark:text-gray-300 animate-slide-up">
-            Explora las sesiones de entrenamiento específicas para porteros que realiza Fran Pérez para mantener su nivel de élite.
+            Explora las sesiones de entrenamiento específicas para porteros que realiza Fran Pérez para mantener su nivel de élite en el San José de Valencia.
           </p>
           
           {/* Search and Filters */}
@@ -233,11 +232,11 @@ const Entrenamientos = () => {
                   )}
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
-                  <div className="relative aspect-video overflow-hidden">
+                  <div className="relative aspect-video overflow-hidden group">
                     <img 
                       src={training.thumbnailUrl}
                       alt={training.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
                     <div className="absolute top-3 left-3 flex gap-2">
@@ -247,6 +246,13 @@ const Entrenamientos = () => {
                       <Badge className={`${getIntensityColor(training.intensity)} border-none`}>
                         Intensidad {training.intensity === "low" ? "Baja" : training.intensity === "medium" ? "Media" : "Alta"}
                       </Badge>
+                    </div>
+                    
+                    {/* Video Play Button Overlay */}
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button size="icon" variant="secondary" className="rounded-full w-16 h-16 bg-white/30 hover:bg-white/50 text-white">
+                        <Play size={30} className="ml-1" />
+                      </Button>
                     </div>
                   </div>
                   <CardContent className="p-6">
@@ -268,7 +274,16 @@ const Entrenamientos = () => {
                       </div>
                     </div>
                     
-                    <Button className="w-full">Ver Entrenamiento</Button>
+                    <Button 
+                      className="w-full flex items-center gap-2"
+                      as="a"
+                      href={training.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Video size={16} />
+                      Ver Entrenamiento
+                    </Button>
                   </CardContent>
                 </Card>
               ))}

@@ -54,7 +54,15 @@ const Navbar = () => {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2 z-10">
+        <Link to="/" className="flex items-center space-x-3 z-10">
+          {/* Club Logo */}
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=120&auto=format&fit=crop"
+              alt="San José de Valencia"
+              className="w-8 h-8 object-contain"
+            />
+          </div>
           <div className="font-bold text-xl md:text-2xl tracking-tight relative">
             <span className="text-primary">Fran</span>
             <span className="text-gray-800 dark:text-gray-200">Pérez</span>
