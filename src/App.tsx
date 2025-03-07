@@ -10,6 +10,7 @@ import PartidosAnteriores from "./pages/PartidosAnteriores";
 import ProximosPartidos from "./pages/ProximosPartidos";
 import Entrenamientos from "./pages/Entrenamientos";
 import Destacados from "./pages/Destacados";
+import Clasificacion from "./pages/Clasificacion";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/partidos" element={<ProximosPartidos />} />
           <Route path="/entrenamientos" element={<Entrenamientos />} />
           <Route path="/destacados" element={<Destacados />} />
+          <Route path="/clasificacion" element={<Clasificacion />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

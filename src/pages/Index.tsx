@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -120,6 +121,27 @@ const Index = () => {
               <p className="text-gray-500 mb-4">Vuelve pronto para ver actualizaciones</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Standings Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+              <span className="inline-block text-sm font-medium text-primary mb-2">POSICIONES</span>
+              <h2 className="text-3xl md:text-4xl font-bold">Clasificación</h2>
+            </div>
+            <Link to="/clasificacion" className="mt-4 md:mt-0">
+              <Button variant="outline">Ver clasificación completa</Button>
+            </Link>
+          </div>
+          
+          <div className="text-center">
+            <Link to="/clasificacion">
+              <Button size="lg" className="mx-auto">Ver tabla de clasificación</Button>
+            </Link>
+          </div>
         </div>
       </section>
       
