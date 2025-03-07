@@ -1,19 +1,18 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { ExternalLink as ExternalLinkIcon } from "lucide-react";
 
-interface ExternalLinkProps {
+interface ExternalLinkProps extends Omit<ButtonProps, 'onClick'> {
   href: string;
-  className?: string;
   children: React.ReactNode;
 }
 
-const ExternalLink = ({ href, className, children }: ExternalLinkProps) => {
+const ExternalLink = ({ href, children, ...props }: ExternalLinkProps) => {
   return (
     <Button
       variant="outline"
-      className={className}
+      {...props}
       onClick={() => window.open(href, '_blank', 'noopener,noreferrer')}
     >
       {children}

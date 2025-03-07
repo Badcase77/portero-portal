@@ -31,7 +31,7 @@ export const fetchMatches = async (): Promise<{
   past: TeamMatch[];
 }> => {
   try {
-    // Fetch data from iSquad
+    // Fetch data from iSquad with the URL provided by the user
     const response = await fetch('https://resultadosffcv.isquad.es/calendario.php?id_temp=20&id_modalidad=33345&id_competicion=903498791&id_torneo=28562919');
     
     if (!response.ok) {
@@ -119,6 +119,22 @@ function parseMatchesFromHTML(html: string): TeamMatch[] {
         isPast = matchDate < today;
       }
       
+      // Extract venue if available (or use default)
+      let venue = "Campo por confirmar";
+      const venueMatch = rowContent.match(/<td[^>]*class="campo"[^>]*>([\s\S]*?)<\/td>/);
+      if (venueMatch && venueMatch[1].trim() !== '') {
+        const venueText = venueMatch[1].replace(/<[^>]*>/g, '').trim();
+        if (venueText) venue = venueText;
+      }
+      
+      // Get competition name
+      let competition = "Liga";
+      // Try to extract competition from parent elements or headers in the HTML
+      const competitionMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/);
+      if (competitionMatch && competitionMatch[1].trim() !== '') {
+        competition = competitionMatch[1].trim();
+      }
+      
       // Create match object
       const matchObj: TeamMatch = {
         id: `${id++}`,
@@ -132,8 +148,8 @@ function parseMatchesFromHTML(html: string): TeamMatch[] {
         },
         date: matchDate.toISOString().split('T')[0],
         time: timeMatch[1],
-        venue: "Estadio por confirmar", // Default venue since it may not be in the HTML
-        competition: "Liga", // Default competition
+        venue: venue,
+        competition: competition,
         isPast
       };
       
