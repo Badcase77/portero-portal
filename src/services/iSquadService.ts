@@ -25,39 +25,138 @@ export interface TeamMatch {
 // Default team logo to use when logos aren't available
 const DEFAULT_LOGO = "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=120&auto=format&fit=crop";
 
-// Mock function to fetch from iSquad API
-// In a real implementation, this would make an actual API call
+// Function to fetch matches from iSquad
 export const fetchMatches = async (): Promise<{
   upcoming: TeamMatch[];
   past: TeamMatch[];
 }> => {
   try {
-    // This is where you would fetch from the actual iSquad API
-    // const response = await fetch('https://isquad-api.example.com/calendar');
-    // const data = await response.json();
+    // Fetch data from iSquad
+    const response = await fetch('https://resultadosffcv.isquad.es/calendario.php?id_temp=20&id_modalidad=33345&id_competicion=903498791&id_torneo=28562919');
     
-    // For now, we'll return mock data with a small delay to simulate a network request
-    await new Promise(resolve => setTimeout(resolve, 800));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     
-    // Process the data into our TeamMatch format
-    const mockResponse = generateMockMatches();
+    const html = await response.text();
+    
+    // Parse the HTML to extract match data
+    const matches = parseMatchesFromHTML(html);
     
     return {
-      upcoming: mockResponse.upcoming,
-      past: mockResponse.past
+      upcoming: matches.filter(match => !match.isPast),
+      past: matches.filter(match => match.isPast)
     };
   } catch (error) {
     console.error("Error fetching iSquad data:", error);
     toast.error("No se pudo cargar el calendario de partidos");
+    
+    // Return mock data as fallback
+    const mockResponse = generateMockMatches();
     return {
-      upcoming: [],
-      past: []
+      upcoming: mockResponse.upcoming,
+      past: mockResponse.past
     };
   }
 };
 
-// Helper function to generate mock data
-// This would be replaced with actual data processing from the iSquad API
+// Function to parse matches from the HTML response
+function parseMatchesFromHTML(html: string): TeamMatch[] {
+  // This is a simple parser function to extract match data from HTML
+  // In a real implementation, you would use a more robust parsing method
+  const matches: TeamMatch[] = [];
+  const today = new Date();
+  
+  try {
+    // Find table rows with match data
+    const tableRowRegex = /<tr[^>]*class="fila[^"]*"[^>]*>([\s\S]*?)<\/tr>/g;
+    let match;
+    let id = 1;
+    
+    while ((match = tableRowRegex.exec(html)) !== null) {
+      const rowContent = match[1];
+      
+      // Extract date and time
+      const dateMatch = rowContent.match(/<td[^>]*>([\d\/]+)<\/td>/);
+      const timeMatch = rowContent.match(/<td[^>]*>([\d:]+)<\/td>/);
+      
+      // Extract team names
+      const teamMatches = rowContent.match(/<td[^>]*class="equipo"[^>]*>([\s\S]*?)<\/td>/g);
+      if (!teamMatches || teamMatches.length < 2 || !dateMatch || !timeMatch) continue;
+      
+      const homeTeamNameMatch = teamMatches[0].match(/>([^<]+)</);
+      const awayTeamNameMatch = teamMatches[1].match(/>([^<]+)</);
+      
+      if (!homeTeamNameMatch || !awayTeamNameMatch) continue;
+      
+      // Extract result if available
+      const resultMatch = rowContent.match(/<td[^>]*class="resultado"[^>]*>([\s\S]*?)<\/td>/);
+      let homeScore: number | undefined;
+      let awayScore: number | undefined;
+      let isPast = false;
+      
+      if (resultMatch && resultMatch[1].includes('-')) {
+        const scoresParts = resultMatch[1].trim().split('-');
+        if (scoresParts.length === 2) {
+          homeScore = parseInt(scoresParts[0].trim(), 10);
+          awayScore = parseInt(scoresParts[1].trim(), 10);
+          isPast = !isNaN(homeScore) && !isNaN(awayScore);
+        }
+      }
+      
+      // Parse date
+      const dateParts = dateMatch[1].split('/');
+      if (dateParts.length !== 3) continue;
+      
+      const matchDate = new Date(
+        parseInt('20' + dateParts[2], 10),
+        parseInt(dateParts[1], 10) - 1,
+        parseInt(dateParts[0], 10)
+      );
+      
+      // Check if match is past or upcoming based on date and result
+      if (!isPast) {
+        isPast = matchDate < today;
+      }
+      
+      // Create match object
+      const matchObj: TeamMatch = {
+        id: `${id++}`,
+        homeTeam: {
+          name: homeTeamNameMatch[1].trim(),
+          logo: DEFAULT_LOGO
+        },
+        awayTeam: {
+          name: awayTeamNameMatch[1].trim(),
+          logo: DEFAULT_LOGO
+        },
+        date: matchDate.toISOString().split('T')[0],
+        time: timeMatch[1],
+        venue: "Estadio por confirmar", // Default venue since it may not be in the HTML
+        competition: "Liga", // Default competition
+        isPast
+      };
+      
+      // Add result if it's a past match
+      if (isPast && typeof homeScore === 'number' && typeof awayScore === 'number') {
+        matchObj.result = {
+          homeScore,
+          awayScore
+        };
+      }
+      
+      matches.push(matchObj);
+    }
+    
+    return matches;
+  } catch (error) {
+    console.error("Error parsing matches from HTML:", error);
+    return [];
+  }
+}
+
+// Helper function to generate mock data as fallback
+// This would be used if the real data fetch fails
 function generateMockMatches() {
   const today = new Date();
   
