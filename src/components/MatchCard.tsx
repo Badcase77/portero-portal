@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface MatchCardProps {
@@ -121,12 +120,12 @@ const MatchCard = ({
           {/* Action Button */}
           <div className="text-center">
             {isPast ? (
-              <Button variant="outline" className="w-full" asChild>
-                <Link to="/partidos/anteriores">Ver Resumen</Link>
+              <Button variant="outline" className="w-full">
+                Ver Resumen
               </Button>
             ) : (
-              <Button className="w-full" asChild>
-                <Link to="/partidos">Recordatorio</Link>
+              <Button className="w-full">
+                Recordatorio
               </Button>
             )}
           </div>

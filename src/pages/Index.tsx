@@ -8,8 +8,40 @@ import MatchCard from "@/components/MatchCard";
 import HighlightCard from "@/components/HighlightCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { fetchMatches, TeamMatch } from "@/services/iSquadService";
-import { toast } from "sonner";
+
+// Sample match data
+const upcomingMatches = [
+  {
+    id: "1",
+    homeTeam: {
+      name: "FC Barcelona",
+      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
+    },
+    awayTeam: {
+      name: "Real Madrid",
+      logo: "https://logodownload.org/wp-content/uploads/2018/07/real-madrid-logo.png",
+    },
+    date: "2023-12-15",
+    time: "20:00",
+    venue: "Camp Nou, Barcelona",
+    competition: "LaLiga",
+  },
+  {
+    id: "2",
+    homeTeam: {
+      name: "Atlético Madrid",
+      logo: "https://logodownload.org/wp-content/uploads/2017/02/atletico-madrid-logo.png",
+    },
+    awayTeam: {
+      name: "FC Barcelona",
+      logo: "https://logodownload.org/wp-content/uploads/2017/02/barcelona-fc-logo-0.png",
+    },
+    date: "2023-12-22",
+    time: "18:30",
+    venue: "Wanda Metropolitano, Madrid",
+    competition: "LaLiga",
+  },
+];
 
 // Sample highlights data
 const highlights = [
@@ -53,27 +85,9 @@ const highlights = [
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [upcomingMatches, setUpcomingMatches] = useState<TeamMatch[]>([]);
-  const [isLoadingMatches, setIsLoadingMatches] = useState(true);
 
   useEffect(() => {
     setIsLoaded(true);
-
-    const getMatches = async () => {
-      setIsLoadingMatches(true);
-      try {
-        const { upcoming } = await fetchMatches();
-        // Get only the next 2 matches for the homepage
-        setUpcomingMatches(upcoming.slice(0, 2));
-      } catch (error) {
-        console.error("Error loading matches:", error);
-        toast.error("Error al cargar los partidos");
-      } finally {
-        setIsLoadingMatches(false);
-      }
-    };
-
-    getMatches();
   }, []);
 
   return (
@@ -99,48 +113,16 @@ const Index = () => {
             </Link>
           </div>
           
-          {isLoadingMatches ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            </div>
-          ) : upcomingMatches.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-6">
-              {upcomingMatches.map((match, index) => (
-                <div 
-                  key={match.id} 
-                  className={`animate-scale`}
-                  style={{ animationDelay: `${index * 150}ms` }}
-                >
-                  <MatchCard {...match} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-              <h3 className="text-xl font-semibold mb-2">No hay próximos partidos programados</h3>
-              <p className="text-gray-500 mb-4">Vuelve pronto para ver actualizaciones</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Standings Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-            <div>
-              <span className="inline-block text-sm font-medium text-primary mb-2">POSICIONES</span>
-              <h2 className="text-3xl md:text-4xl font-bold">Clasificación</h2>
-            </div>
-            <Link to="/clasificacion" className="mt-4 md:mt-0">
-              <Button variant="outline">Ver clasificación completa</Button>
-            </Link>
-          </div>
-          
-          <div className="text-center">
-            <Link to="/clasificacion">
-              <Button size="lg" className="mx-auto">Ver tabla de clasificación</Button>
-            </Link>
+          <div className="grid md:grid-cols-2 gap-6">
+            {upcomingMatches.map((match, index) => (
+              <div 
+                key={match.id} 
+                className={`animate-scale`}
+                style={{ animationDelay: `${index * 150}ms` }}
+              >
+                <MatchCard {...match} />
+              </div>
+            ))}
           </div>
         </div>
       </section>

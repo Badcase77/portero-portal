@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +38,6 @@ const Navbar = () => {
     { name: 'Partidos Anteriores', path: '/partidos/anteriores' },
     { name: 'Entrenamientos', path: '/entrenamientos' },
     { name: 'Destacados', path: '/destacados' },
-    { name: 'Clasificación', path: '/clasificacion' },
   ];
 
   const isActive = (path: string) => {
